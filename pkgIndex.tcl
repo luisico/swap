@@ -8,4 +8,4 @@
 # script is sourced, the variable $dir must contain the
 # full path name of this file's directory.
 
-package ifneeded rmsdtt 1.0 [list source [file join $dir swap.tcl]]
+package ifneeded swap 1.0 [list source [file join $dir swap.tcl]]
