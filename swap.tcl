@@ -18,7 +18,7 @@
 
 # Installation
 # ------------
-# To add this pluging to the VMD extensions menu you can either:
+# To add this plugin to the VMD extensions menu you can either:
 # a) add this to your .vmdrc:
 #    source "/path/to/plugin/swap.tcl"
 
