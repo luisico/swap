@@ -43,7 +43,7 @@ namespace eval swap {
   }
   
 
-  proc add_atoms { resname type atoms {o 0} } {
+  proc add { resname type atoms {o 0} } {
     variable swap_list
     
     if {[lsearch [array names swap_list] $resname] >= 0 && $o == 0} {
@@ -52,14 +52,29 @@ namespace eval swap {
     }
 
     set swap_list($resname) "$type $atoms"
-    parray swap_list
+    return
   }
 
-  proc del_atoms { resname } {
+  proc del { resname } {
     variable swap_list
     
     unset swap_list($resname)
-    parray swap_list
+    return
+  }
+
+  proc list { {type "all"} } {
+    variable swap_list
+
+    if {$type == "all"} {
+      parray swap_list
+    } else {
+      foreach r [array names swap_list] {
+	if {[lindex $swap_list($r) 0] eq $type} {
+	 puts "swap_list($r) = $swap_list($r)" 
+	}
+      }
+    }
+    
   }
 
   proc swap_residue { res {frame "now"} } {
