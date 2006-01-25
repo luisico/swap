@@ -1,0 +1,146 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+  <LINK REL="stylesheet" HREF="http://physiology.med.cornell.edu/resources/physbio.css" TYPE="text/css">
+  <LINK REL="stylesheet" HREF="../vmd.css" TYPE="text/css">
+  <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=iso-8859-1">
+  <TITLE>VMD plugin Swap</TITLE>
+  <META NAME="AUTHOR" CONTENT="Luis Gracia">
+</HEAD>
+<BODY LANG="en-US">
+
+<TABLE WIDTH=750 ALIGN=center>
+<TR><TD><A HREF="http://physiology.med.cornell.edu/"><IMG SRC="http://physiology.med.cornell.edu/images/header.jpg" BORDER=0 ALT="physiology"></A></TD></TR>
+<TR><TD>
+
+<H4><A HREF="../index.html">VMD plugins at WMC Physiology & Biophysics</A></H4>
+<H1>Swap: swapping coordinates between atoms</H1>
+
+<H2><A NAME="description">Description</A></H2>
+
+<P>The Swap plugin is a set of procedures (no GUI is supplied) to swap coordinates between atoms in a molecule. The development of this plugin started due to the necessity to calculate the best rmsd between two conformations of a molecule that contains symmetric atoms. It has been further developed to allow for more abstract swapping of atoms and to be accessible from other plugins or the command line.</P>
+
+<P>The following is defined:
+<UL>
+  <LI><B>::swap::swap_list</B> is not a procedure, but an array that holds the definitions of atoms to swap for each residue. In addition, it holds a property called <EM>type</EM> that can be defined by the user to group set of equivalent atoms, i.e., symmetry atoms in PHE (sym), positions not well identified by XRAY in GLN (xray, or any other label you like to use). The following symmetry atoms are predifined:
+<PRE>
+PHE {sym CD1 CD2 CE1 CE2}
+TYR {sym CD1 CD2 CE1 CE2}
+ASP {sym OD1 OD2}
+GLU {sym OE1 OE2}
+ARG {sym NH1 NH2}
+VAL {sym CG1 CG2}
+</PRE>
+For example, <EM>PHE</EM> has type <EM>sym</EM> and defined <EM>CD1</EM> to be equivalent to <EM>CD2</EM>, and <EM>CE1</EM> to <EM>CE2</EM>. The following procedures allow to print, add and delete definitions.
+  <LI><B>::swap::list <EM>type</EM></B> prints the definitions in <EM>::swap::swap_list</EM>. If <EM>type</EM> is used only definitions of the correspoding type will be printed (see <EM>::swap::swap_list</EM> below for further explanations).
+  <LI><B>::swap::add <EM>resname type atoms o</EM></B> adds a definition to <EM>::swap::swap_list</EM> for <EM>resname</EM>. <EM>atoms</EM> is a list of pairs of equivalent atoms to swap the coordinates (enclose the list in brackets, see examples below). <EM>o</EM> can be set to 1 to force overwrite of definition. See <EM>::swap::swap_list</EM> below for further explanations
+  <LI><B>::swap::del <EM>resname</EM></B> deletes the entry for <EM>resname</EM> in <EM>::swap::swap_list</EM>.
+  <LI><B>::swap::swap_residue <EM>res frame?</EM></B> will swap the atoms defined in the <EM>::swap::swap_list</EM> for the residue contained the in the atomselection <EM>res</EM> (must match to one single residue in the molecule). <EM>Frame</EM> is the frame to use when swapping the coordinates (default: <EM>now</EM>).
+  <LI><B>::swap::swap_atoms <EM>atom1 atom2</EM></B> swap two atomselections (each must match to one single atom in the molecule). This proc is called from <EM>::swap::swap_residue</EM>.
+</UL>
+</P>
+
+<P>Examples of use:</P>
+<UL>
+  <LI>Activating the plugin (I suggest doing this in your .vmdrc, see <A HREF="#install">installation instructions</A> below):
+<PRE>
+package require swap
+</PRE>
+  <LI>Adding and removing definitions:
+<PRE>
+::swap::list
+::swap::add RES equiv {C1 C2 C3 C4}
+::swap::list
+::swap::list sym
+::swap::list equiv
+::swap::del RES
+</PRE>
+
+  <LI>Calculating the best rmsd swapping PHE residues. Load two conformations of the same molecule in mol 0 and mol 1 (the effect will be more clear if you make sure some PHE residues have swapped conformations):
+<PRE>
+set ref [atomselect 0 "resname PHE"]
+set sel [atomselect 1 "resname PHE"]
+
+# Calculate initial rmsd
+set rmsd [measure rmsd $ref $sel]
+puts "$rmsd"
+
+# For each PHE residue, swap atoms and recalculate rmsd
+foreach res [lsort -unique -integer [$sel get resid]] {
+   set res_sel [atomselect 1 "resid $res"]
+   ::swap::residue $res_sel
+   set rmsd2 [measure rmsd $ref $sel]
+   puts -nonewline "$r $rmsd $rsmd2"
+   # If new rmsd is lower, save it
+   if {$rmsd2 < $rmsd} {
+      lappend swapped $res_sel
+      set rmsd $rmsd2
+      puts -nonewline " -- swap"
+   } else {
+      # revert swap if rmsd was higher
+      ::swap::residue $res_sel
+   }
+   puts ""
+
+   # revert swaps of those residues that produces lower rmsd
+   foreach r $swapped {
+      ::swap::residue $r
+   }
+}
+</PRE>
+</UL>
+
+<P>A more complex version of the previous example has been implemented in the <A HREF="../rmsdtt">rmsdtt plugin</A>, with support for trajectories. Another example to calculate the rmsd by residue using the swapping plugin can be found <A HREF="swapbyres.tcl">here</A>.
+
+
+<H2><A NAME="download">Download</A></H2>
+
+Send a mail to the <A HREF="#author">author</A> if you would like to be informed about new updates of this plugin.
+
+<TABLE WIDTH=650 CLASS="plugin">
+  <TR>
+    <TD CLASS="vertit"><B><A NAME="last">version 0.1</A> (24 Jan'06)</B></TD>
+      <TD CLASS="verdown">[<A HREF="versions/0.1/swap.tcl">download</A>]</TD>
+  </TR><TR>
+    <TD CLASS="verlog" COLSPAN=2>Change log:
+  <UL>
+    <LI>First release
+  </UL></TD>
+  </TR>
+</TABLE>
+
+<H2><A NAME="install">Installation</A></H2>
+
+<OL>
+<LI><B>Download</B> the plugin from <A HREF="#download">here</A> to the directory where you store your VMD plugins. Skip to point <B>4</B> if you are updating the plugin.
+<LI>Add the following line to a file called <B><EM>pkgIndex.tcl</EM></B> in the same directory as the plugin (create it if it does not exists, or get it from <A HREF="pkgIndex.tcl">here</A>):</P>
+<PRE>package ifneeded swap 1.0 [list source [file join $dir swap.tcl]]</PRE>
+<LI>If you want the plugin to load each time you lanch VMD, add the following to your <B><EM>.vmdrc</EM></B> startup file (or create one) (for unix the path should be <EM>$HOME/.vmdrc</EM>, and for windows <EM>%USERPROFILE%\vmd.rc</EM>):
+<PRE>
+lappend auto_path {/path/to/your/plugins/directory}
+package require swap
+</PRE>
+<P>Remember to correct the path to your plugins directory; i.e, if you saved the plugin in <EM>/home/user/myplugins</EM>, write that same path in the <EM>auto_path</EM> line.
+<P><B>Note:</B> If you created the <EM>.vmdrc</EM> file, remember to add <B><EM>menu main on</EM></B> to get the main menu back.</P>
+<LI><B>Start</B> VMD. The Swap plugin should be accessible from the command line, try any command in the examples above.
+</OL>
+
+<H2><A NAME="author">Author</A></H2>
+
+<P>Send comments and feedback to <A HREF="mailto:lug2002@med.cornell.edu">Luis Gracia</A>.</P>
+
+</TD></TR>
+
+<TR><TD CLASS="footer">Copyright &copy; 2006, Weill Medical College of Cornell University. All Rights Reserved</TD></TR>
+
+<TR><TD CLASS="address">
+<ADDRESS>
+<A HREF="mailto:lug2002@med.cornell.edu">Luis Gracia</A>
+| last updated: Wednesday, January 26, 2006
+<!--#config  timefmt="%A %e/%m/%y"--><!--#echo var="LAST_MODIFIED"-->
+</ADDRESS>
+</TD></TR>
+
+</BODY>
+</HTML>
+
