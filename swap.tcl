@@ -42,7 +42,6 @@ namespace eval swap {
     VAL {sym CG1 CG2}
   }
   
-
   proc add { resname type atoms {o 0} } {
     variable swap_list
     
@@ -95,11 +94,8 @@ namespace eval swap {
       #puts "$at1 --- $at2"
       swap_atoms [atomselect $mol "residue $residue and name $at1" frame $frame] [atomselect $mol "residue $residue and name $at2" frame $frame]
     }
-    
-    
   }  
   
-
   proc swap_atoms { atom1 atom2 } {
     # atom1 and atom2 are VMD selections that match to only one atom each
     
@@ -112,9 +108,5 @@ namespace eval swap {
     $atom1 set {x y z} [$atom2 get {x y z}]
     $atom2 set {x y z} $xyz1
   }
-  
-  
-  
-  
 }
 

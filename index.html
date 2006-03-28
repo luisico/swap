@@ -99,8 +99,8 @@ Send a mail to the <A HREF="#author">author</A> if you would like to be informed
 
 <TABLE WIDTH=650 CLASS="plugin">
   <TR>
-    <TD CLASS="vertit"><B><A NAME="last">version 0.1</A> (24 Jan'06)</B></TD>
-      <TD CLASS="verdown">[<A HREF="versions/0.1/swap.tcl">download</A>]</TD>
+    <TD CLASS="vertit"><B><A NAME="last">version 1.0</A> (28 Mar'06)</B></TD>
+      <TD CLASS="verdown">[<A HREF="versions/swap-v1.0.tgz">download</A>]</TD>
   </TR><TR>
     <TD CLASS="verlog" COLSPAN=2>Change log:
   <UL>
@@ -112,9 +112,7 @@ Send a mail to the <A HREF="#author">author</A> if you would like to be informed
 <H2><A NAME="install">Installation</A></H2>
 
 <OL>
-<LI><B>Download</B> the plugin from <A HREF="#download">here</A> to the directory where you store your VMD plugins. Skip to point <B>4</B> if you are updating the plugin.
-<LI>Add the following line to a file called <B><EM>pkgIndex.tcl</EM></B> in the same directory as the plugin (create it if it does not exists, or get it from <A HREF="pkgIndex.tcl">here</A>):</P>
-<PRE>package ifneeded swap 1.0 [list source [file join $dir swap.tcl]]</PRE>
+<LI><B>Download</B> the plugin from <A HREF="#download">here</A> and unzip/untar it to the directory where you store your VMD plugins. Skip to point <B>4</B> if you are updating the plugin.
 <LI>If you want the plugin to load each time you lanch VMD, add the following to your <B><EM>.vmdrc</EM></B> startup file (or create one) (for unix the path should be <EM>$HOME/.vmdrc</EM>, and for windows <EM>%USERPROFILE%\vmd.rc</EM>):
 <PRE>
 lappend auto_path {/path/to/your/plugins/directory}
@@ -136,7 +134,7 @@ package require swap
 <TR><TD CLASS="address">
 <ADDRESS>
 <A HREF="mailto:lug2002@med.cornell.edu">Luis Gracia</A>
-| last updated: Wednesday, January 26, 2006
+| last updated: Tuesday, March 28, 2006
 <!--#config  timefmt="%A %e/%m/%y"--><!--#echo var="LAST_MODIFIED"-->
 </ADDRESS>
 </TD></TR>
