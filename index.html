@@ -68,9 +68,9 @@ puts "$rmsd"
 # For each PHE residue, swap atoms and recalculate rmsd
 foreach res [lsort -unique -integer [$sel get resid]] {
    set res_sel [atomselect 1 "resid $res"]
-   ::swap::residue $res_sel
+   ::swap::swap_residue $res_sel
    set rmsd2 [measure rmsd $ref $sel]
-   puts -nonewline "$r $rmsd $rsmd2"
+   puts -nonewline "$res $rmsd $rmsd2"
    # If new rmsd is lower, save it
    if {$rmsd2 < $rmsd} {
       lappend swapped $res_sel
@@ -78,13 +78,13 @@ foreach res [lsort -unique -integer [$sel get resid]] {
       puts -nonewline " -- swap"
    } else {
       # revert swap if rmsd was higher
-      ::swap::residue $res_sel
+      ::swap::swap_residue $res_sel
    }
    puts ""
 
    # revert swaps of those residues that produces lower rmsd
    foreach r $swapped {
-      ::swap::residue $r
+      ::swap::swap_residue $res_sel
    }
 }
 </PRE>
@@ -99,13 +99,14 @@ Send a mail to the <A HREF="#author">author</A> if you would like to be informed
 
 <TABLE WIDTH=650 CLASS="plugin">
   <TR>
-    <TD CLASS="vertit"><B><A NAME="last">version 1.0</A> (28 Mar'06)</B></TD>
-      <TD CLASS="verdown">[<A HREF="versions/swap-v1.0.tgz">download</A>]</TD>
+    <TD CLASS="vertit"><B><A NAME="last">version 1.0</A> (4 Apr'06)</B></TD>
+    <TD CLASS="verdown">[<A HREF="versions/swap-v1.0.tgz">download</A>]</TD>
   </TR><TR>
     <TD CLASS="verlog" COLSPAN=2>Change log:
-  <UL>
-    <LI>First release
-  </UL></TD>
+      <UL>
+	<LI>First release
+      </UL>
+    </TD>
   </TR>
 </TABLE>
 
@@ -129,12 +130,12 @@ package require swap
 
 </TD></TR>
 
-<TR><TD CLASS="footer">Copyright &copy; 2006, Weill Medical College of Cornell University. All Rights Reserved</TD></TR>
+<TR><TD CLASS="footer">Copyright &copy; 2006-2008, Weill Cornell Medical College. All Rights Reserved</TD></TR>
 
 <TR><TD CLASS="address">
 <ADDRESS>
 <A HREF="mailto:lug2002@med.cornell.edu">Luis Gracia</A>
-| last updated: Tuesday, March 28, 2006
+| last updated: Tuesday, February 5 2008
 <!--#config  timefmt="%A %e/%m/%y"--><!--#echo var="LAST_MODIFIED"-->
 </ADDRESS>
 </TD></TR>
