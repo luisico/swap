@@ -108,5 +108,28 @@ namespace eval swap {
     $atom1 set {x y z} [$atom2 get {x y z}]
     $atom2 set {x y z} $xyz1
   }
+
+  proc swap_order { atom1 atom2 } {
+    # atom1 and atom2 are VMD selections that match to only one atom each
+    
+    if {[$atom1 num] > 1 || [$atom2 num] > 1} {
+      puts "Error: atom1 or atom2 contained more than 1 atom"
+      return
+    }
+    
+    set keys {name type atomicnumber element resname altloc resid chain segname segid structure user radius mass charge beta occupancy}
+    set temp [$atom1 get $keys]
+    $atom1 set $keys [$atom2 get $keys]
+    $atom2 set $keys $temp
+
+    set keys {x y z ufx ufy ufz phi psi}
+    for {set f 0} {$f < [molinfo [$atom1 molid] get numframes]} {incr f} {
+      $atom1 frame $f
+      $atom2 frame $f
+      set temp [$atom1 get $keys]
+      $atom1 set $keys [$atom2 get $keys]
+      $atom2 set $keys $temp
+    }
+  }
 }
 
